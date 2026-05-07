@@ -2,7 +2,7 @@ from pydantic import BaseModel
 from fastapi import FastAPI, HTTPException
 from .infer import infer, diacritizer
 from mangum import Mangum
-
+import re
 
 class Request(BaseModel):
     text: str 
@@ -10,22 +10,15 @@ class Request(BaseModel):
 app = FastAPI()
 MAX_TEXT_LENGTH = 128
 
+ARABIC_PATTERN = re.compile(
+    r'^[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\s]+$' # Arabic letters + Arabic diacritics + Arabic digits + spaces
+)
+
 def is_arabic_text(text: str) -> bool:
-    arabic_chars = 0
-    total_letters = 0
-
-    for ch in text:
-        if ch.isalpha():
-            total_letters += 1
-            if '\u0600' <= ch <= '\u06FF' or \
-               '\u0750' <= ch <= '\u077F' or \
-               '\u08A0' <= ch <= '\u08FF':
-                arabic_chars += 1
-
-    if total_letters == 0:
+    if not text.strip():
         return False
 
-    return (arabic_chars / total_letters) > 0.7
+    return bool(ARABIC_PATTERN.fullmatch(text))
 
 @app.get("/")
 def health():
@@ -45,7 +38,7 @@ def predict(request: Request):
         raise HTTPException(status_code=400, detail="Empty text")
 
     if not is_arabic_text(text):
-        response["warning"] = "Please enter any Arabic text"
+        response["warning"] = "Please enter only Arabic text"
         return response
     
     if len(diacritizer.extract_chars_and_labels(text)) > MAX_TEXT_LENGTH:
