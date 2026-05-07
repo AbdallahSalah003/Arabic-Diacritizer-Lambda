@@ -1,0 +1,18 @@
+{
+  "version": "2.0",
+  "routeKey": "POST /predict",
+  "rawPath": "/predict",
+  "rawQueryString": "",
+  "headers": { "content-type": "application/json" },
+  "requestContext": {
+    "http": {
+      "method": "POST",
+      "path": "/predict",
+      "protocol": "HTTP/1.1",
+      "sourceIp": "127.0.0.1",
+      "userAgent": "curl/8.x"
+    }
+  },
+  "body": "{\"text\": \"السلام عليكم\"}",
+  "isBase64Encoded": false
+}
