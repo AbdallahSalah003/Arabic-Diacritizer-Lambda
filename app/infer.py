@@ -1,4 +1,5 @@
 import numpy as np
+import os
 import onnxruntime as ort
 from pathlib import Path
 
@@ -57,9 +58,21 @@ ID_TO_LABEL = {idx: label for label, idx in LABEL_TO_ID.items()}
 #==================================================================================
 class ONNXDiacritizer:
     def __init__(self, onnx_model_path: str, max_length: int = 512):
+        so = ort.SessionOptions()
+        
+        # critical for Lambda: we limit threads to match the function's allocated vCPU
+        # Lambda vCPUs = memory (MB) / 1769, roughly
+        # for example, 3008 MB = ~2 vCPUs so 2-4 threads is optimal
+        so.intra_op_num_threads = int(os.environ.get("OMP_NUM_THREADS", "2"))
+        so.inter_op_num_threads = 1 
+        so.graph_optimization_level = ort.GraphOptimizationLevel.ORT_ENABLE_ALL
+        so.enable_mem_pattern = False  # Saves memory during graph optimization
+        so.enable_cpu_mem_arena = False  # Prevents ORT from hoarding memory
+
         self.session = ort.InferenceSession(
             onnx_model_path, 
-            providers=['CPUExecutionProvider']
+            providers=['CPUExecutionProvider'],
+            sess_options=so
         )
         
         self.max_length = max_length
