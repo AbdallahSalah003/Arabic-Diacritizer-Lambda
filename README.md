@@ -1,7 +1,8 @@
 # Arabic Diacritizer - AWS Lambda Deployment
 
-A serverless Arabic text diacritization API powered by ONNX Runtime, deployed on AWS Lambda with a FastAPI interface
+## <a href="https://arabic-diacritizer.abdallahsalahsalem9.workers.dev/">Live Demo</a>
 
+A serverless Arabic text diacritization API powered by ONNX Runtime, deployed on AWS Lambda with a FastAPI interface
 
 <img src="design.jpg" alt="">
 
