@@ -115,23 +115,29 @@ class ONNXDiacritizer:
         return inputs, chars  
 
     def postprocess(self, logits: np.ndarray, original_chars: list) -> str:
-        """
-        Merges predicted diacritics back with the original characters
-        """
-        predicted_ids = np.argmax(logits, axis=-1)[0] 
-        
+        predicted_ids = np.argmax(logits, axis=-1)[0]
+
+        # reserve one position for CLS
+        max_chars = self.max_length - 1
+
+        original_chars1 = original_chars[:max_chars]
+
         diacritized_chars = []
-        for i, char in enumerate(original_chars):
+
+        for i, char in enumerate(original_chars1):
             diacritic_id = predicted_ids[i + 1]
+
             diacritic = ID_TO_LABEL.get(diacritic_id, "")
-            
+
             if diacritic in [PAD_TOKEN, CLS_TOKEN, SEP_TOKEN, UNK_TOKEN]:
                 diacritic = ""
             elif diacritic == NONE_LABEL:
                 diacritic = ""
-            
+
             diacritized_chars.append(char + diacritic)
-        
+
+        diacritized_chars.extend(original_chars[max_chars:])
+
         return "".join(diacritized_chars)
 
     def __call__(self, text: str) -> str:
