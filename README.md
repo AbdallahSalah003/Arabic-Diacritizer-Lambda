@@ -8,7 +8,7 @@ A serverless Arabic text diacritization API powered by ONNX Runtime, deployed on
 
 ## Project Structure
 ├── app/ </br>
-│ ├── infer.py # ONNX model inference logic</br>
+│ ├── infer.py # ONNX model inference</br>
 │ ├── init.py # Python package marker</br>
 │ ├── main.py # FastAPI application & Lambda handler</br>
 │ └── model/</br>
@@ -17,7 +17,7 @@ A serverless Arabic text diacritization API powered by ONNX Runtime, deployed on
 ├── Dockerfile # Container configuration for Lambda</br>
 ├── event.json # Sample Lambda invocation event</br>
 ├── requirements.txt # Python dependencies</br>
-└── README.md # This file</br>
+└── README.md # 
 
 
 ## Local Development
@@ -50,13 +50,13 @@ curl -X GET http://127.0.0.1:8000/
 ```bash
 curl -X POST http://127.0.0.1:8000/predict \
   -H "Content-Type: application/json" \
-  -d '{"text": "بسم الله الرحمن الرحيم مالك يوم الدين"}'
+  -d '{"text": "بسم الله الرحمن الرحيم"}'
 ```
 Example response
 ```
 {
   "warning": null,
-  "diacritized_text": "بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ مَالِكِ يَوْمِ الدِّينِ"
+  "diacritized_text": "بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيم"
 }
 ```
 ### Docker Testing (Lambda Simulation)
@@ -92,7 +92,7 @@ aws ecr create-repository \
 ### Build and Push Docker Image
 ```bash
 export REGION="us-east-1"
-export ACCOUNT_ID="526741672098"
+export ACCOUNT_ID="your_account_id"
 
 aws ecr get-login-password --region=$REGION | docker login \
   --username AWS \
